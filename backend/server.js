@@ -13,10 +13,13 @@ app.use(express.json());
 const ventasRoutes = require("./routes/ventas");
 const proveedoresRoutes = require("./routes/proveedores");
 const productosRoutes = require("./routes/productos");
+const clientesRoutes = require("./routes/clientes");
+
 
 app.use("/api/ventas", ventasRoutes);
 app.use("/api/proveedores", proveedoresRoutes);
 app.use("/api/productos", productosRoutes);
+app.use("/api/clientes", clientesRoutes);
 
 // Iniciar servidor
 app.listen(port, () => {
