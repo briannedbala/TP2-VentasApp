@@ -1,15 +1,18 @@
-const express = require("express");
-const cors = require("cors");
-const ventasRoutes = require("./routes/ventas");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import ventasRoutes from "./routes/ventas.js";
+const PORT = process.env.PORT || 3000;
+
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use("/api/ventas", ventasRoutes);
+app.get("/", (req, res) => res.send("API de Ventas en funcionamiento"));
 
-const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`Servidor corriendo en puerto http://localhost:${PORT}`);
 });

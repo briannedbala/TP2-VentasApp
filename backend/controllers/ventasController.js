@@ -1,47 +1,83 @@
-const db = require("../models/db");
+import { PrismaClient } from '../generated/prisma/client.js';
+const prisma = new PrismaClient();
 
-const registrarVenta = async (req, res) => {
+export const registrarVenta = async (req, res) => {
   const { cliente_rut, fecha, descuento, productos } = req.body;
 
   try {
-    // Calcular totales
-    let monto_final = 0;
-    const subtotales = productos.map((p) => p.precio_unitario * p.cantidad);
-    monto_final = subtotales.reduce((acc, curr) => acc + curr, 0);
-    monto_final -= monto_final * (descuento / 100);
-
-    // Insertar venta
-    const [ventaResult] = await db.query(
-      "INSERT INTO ventas (fecha, cliente_rut, descuento, monto_final) VALUES (?, ?, ?, ?)",
-      [fecha, cliente_rut, descuento, monto_final]
+    // Calcular monto final
+    let monto_final = productos.reduce(
+      (total, p) => total + p.precio_unitario * p.cantidad,
+      0
     );
+    const descuento_decimal = parseFloat(descuento || 0);
+    monto_final -= monto_final * (descuento_decimal / 100);
 
-    const venta_id = ventaResult.insertId;
+    // Crear la venta con los detalles (relación 1:N con detalle_venta)
+    const venta = await prisma.ventas.create({
+      data: {
+        fecha: new Date(fecha),
+        cliente_rut: cliente_rut || null,
+        descuento: descuento_decimal,
+        monto_final,
+        detalle_venta: {
+          create: productos.map((producto) => ({
+            producto_id: producto.id,
+            precio_unitario: producto.precio_unitario,
+            cantidad: producto.cantidad,
+            subtotal: producto.precio_unitario * producto.cantidad,
+          })),
+        },
+      },
+    });
 
-    // Insertar detalle de productos
-    for (let producto of productos) {
-      const subtotal = producto.precio_unitario * producto.cantidad;
-      await db.query(
-        "INSERT INTO detalle_venta (venta_id, producto_id, precio_unitario, cantidad, subtotal) VALUES (?, ?, ?, ?, ?)",
-        [
-          venta_id,
-          producto.id,
-          producto.precio_unitario,
-          producto.cantidad,
-          subtotal,
-        ]
-      );
-    }
+    res.status(201).json({
+      mensaje: "Venta registrada con éxito",
+      ventaId: venta.id,
+    });
 
-    res
-      .status(201)
-      .json({ mensaje: "Venta registrada con éxito", ventaId: venta_id });
   } catch (error) {
-    console.error(error);
+    console.error("Error al registrar venta:", error);
     res.status(500).json({ error: "Error al registrar la venta" });
   }
 };
 
-module.exports = {
-  registrarVenta,
+
+export const getVentas = async (req, res) => {
+  try {
+    const ventas = await prisma.ventas.findMany({
+      include: {
+        detalle_venta: true,
+      },
+    });
+    res.json(ventas);
+  } catch (error) {
+    console.error("Error al obtener ventas:", error);
+    res.status(500).json({ error: "Error al obtener las ventas" });
+  }
 };
+
+
+export const eliminarVenta = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Primero elimina los detalles
+    await prisma.detalle_venta.deleteMany({
+      where: { venta_id: parseInt(id) },
+    });
+
+    // Luego elimina la venta
+    await prisma.ventas.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.json({ mensaje: "Venta eliminada con éxito" });
+  } catch (error) {
+    console.error("Error al eliminar venta:", error);
+    res.status(500).json({ error: "No se pudo eliminar la venta" });
+  }
+};
+
+
+
