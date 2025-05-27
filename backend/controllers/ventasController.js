@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 
 export const registrarVenta = async (req, res) => {
   const { cliente_rut, fecha, descuento, productos } = req.body;
+  console.log("REQ BODY", req.body); // 👈 esto te dice si llega bien
 
   try {
     // Calcular monto final
@@ -22,7 +23,7 @@ export const registrarVenta = async (req, res) => {
         monto_final,
         detalle_venta: {
           create: productos.map((producto) => ({
-            producto_id: producto.id,
+            producto_id: parseInt(producto.id),
             precio_unitario: producto.precio_unitario,
             cantidad: producto.cantidad,
             subtotal: producto.precio_unitario * producto.cantidad,
