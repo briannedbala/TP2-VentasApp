@@ -35,6 +35,7 @@ const DetalleVentaForm = ({ onBack, onSubmit }) => {
   return (
     <form onSubmit={submitVenta} className="p-4 border rounded shadow">
       <h2 className="text-xl font-semibold mb-4">Registrar Venta</h2>
+      <label htmlFor="cliente_rut">RUT </label>
       <input
         name="cliente_rut"
         placeholder="RUT Cliente"
@@ -43,6 +44,7 @@ const DetalleVentaForm = ({ onBack, onSubmit }) => {
         className="border p-2 mb-2 w-full"
         required
       />
+      <label htmlFor="fecha">Fecha</label>
       <input
         name="fecha"
         type="date"
@@ -51,6 +53,7 @@ const DetalleVentaForm = ({ onBack, onSubmit }) => {
         className="border p-2 mb-2 w-full"
         required
       />
+      <label htmlFor="descuento">Descuento (%)</label>
       <input
         name="descuento"
         type="number"
@@ -62,7 +65,9 @@ const DetalleVentaForm = ({ onBack, onSubmit }) => {
       <h3 className="font-semibold mt-4 mb-2">Productos</h3>
       {venta.productos.map((p, index) => (
         <div key={index} className="flex gap-2 mb-2">
+          <label htmlFor="id_producto">ID producto</label>
           <input
+            name="id_producto"
             type="number"
             placeholder="ID Producto"
             value={p.id}
@@ -70,7 +75,9 @@ const DetalleVentaForm = ({ onBack, onSubmit }) => {
             className="border p-2 w-1/4"
             required
           />
+          <label htmlFor="precio_unitario">Precio unitario</label>
           <input
+            name="precio_unitario"
             type="number"
             placeholder="Precio Unitario"
             value={p.precio_unitario === '' || isNaN(p.precio_unitario) ? '' : p.precio_unitario}
@@ -78,7 +85,9 @@ const DetalleVentaForm = ({ onBack, onSubmit }) => {
             className="border p-2 w-1/4"
             required
           />
+          <label htmlFor="cantidad">Cantidad</label>
           <input
+            name="cantidad"
             type="number"
             placeholder="Cantidad"
             value={p.cantidad}
