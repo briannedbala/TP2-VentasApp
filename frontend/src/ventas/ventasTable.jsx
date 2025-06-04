@@ -112,7 +112,7 @@ const TablaVentas = () => {
 
   const fetchVentas = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/ventas");
+      const res = await axios.get("http://localhost:3001/api/ventas");
       setVentas(res.data);
     } catch (err) {
       console.error("Error al obtener ventas", err);
@@ -125,7 +125,7 @@ const TablaVentas = () => {
 
   const agregarVenta = async (venta) => {
     try {
-      await axios.post("http://localhost:3000/api/ventas", venta, {
+      await axios.post("http://localhost:3001/api/ventas", venta, {
         headers: {
           "Content-Type": "application/json",
         }
