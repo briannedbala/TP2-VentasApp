@@ -1,7 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-const app = express();
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import ventasRoutes from "./routes/ventas.js";
+const PORT = process.env.PORT || 3000;
+
+
 
 const port = process.env.PORT || 3001;
 
@@ -9,19 +11,10 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Rutas
-const ventasRoutes = require("./routes/ventas");
-const proveedoresRoutes = require("./routes/proveedores");
-const productosRoutes = require("./routes/productos");
-const clientesRoutes = require("./routes/clientes");
-
-
 app.use("/api/ventas", ventasRoutes);
-app.use("/api/proveedores", proveedoresRoutes);
-app.use("/api/productos", productosRoutes);
-app.use("/api/clientes", clientesRoutes);
+app.get("/", (req, res) => res.send("API de Ventas en funcionamiento"));
 
-// Iniciar servidor
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto http://localhost:${PORT}`);
 });

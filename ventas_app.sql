@@ -27,6 +27,8 @@ SET time_zone = "+00:00";
 -- Table structure for table `categorias`
 --
 
+CREATE DATABASE IF NOT EXISTS ventas_app
+
 CREATE TABLE `categorias` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
